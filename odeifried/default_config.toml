@@ -1,0 +1,27 @@
+# Odeifried default configuration.
+# Copy to ~/.config/odeifried/config.toml and edit; your file overrides these values.
+# Swapping a model = changing one line below, then `ollama pull <name>`.
+
+[models]
+ollama_url = "http://10.0.2.2:11434"   # VirtualBox NAT address of the Windows host
+planner = "qwen3:4b"                     # reasoning + tool calling
+vision = "qwen2.5vl:3b"                  # GUI fallback; try a UI-TARS GGUF when you have a GPU
+temperature = 0.1
+timeout_seconds = 300                    # CPU inference is slow; be patient
+think = false                            # qwen3 "thinking" off = much faster on CPU
+
+[agent]
+max_steps = 25
+screenshot_max_width = 1280              # smaller screenshots = faster vision model
+
+[paths]
+log_dir = "/var/log/odeifried"           # falls back to ~/.local/state/odeifried/logs if not writable
+state_dir = "~/.local/state/odeifried"   # undo journals, kill-switch flag
+
+[safety]
+# Folders the agent may change without asking (moves/creates). Everything else = Ask.
+writable_roots = ["~"]
+# Shell programs that only read and are always Safe.
+safe_commands = ["ls", "cat", "head", "tail", "wc", "file", "stat", "du", "df", "find",
+                 "grep", "echo", "pwd", "whoami", "date", "uname", "free", "which",
+                 "xdg-open", "gtk-launch", "firefox"]

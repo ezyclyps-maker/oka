@@ -1,0 +1,17 @@
+Odeifried
+Copyright 2026 the Odeifried author.
+
+This product is designed to work with, and draws on ideas from, the following
+open-source projects. No source code from them is included in this release yet;
+when code is adapted, the file will carry the original copyright header and
+this list will say which files.
+
+- Ollama (https://github.com/ollama/ollama), MIT License: local model runtime (used as a separate program).
+- Agent S (https://github.com/simular-ai/Agent-S), Apache-2.0: planned GUI-agent engine for GPU machines.
+- UI-TARS Desktop (https://github.com/bytedance/UI-TARS-desktop), Apache-2.0: design reference (archived Nov 2026).
+- Bytebot (https://github.com/bytebot-ai/bytebot), Apache-2.0: design reference for the task API (archived Mar 2026).
+
+Models are downloaded separately by the user and carry their own licenses
+(e.g. Qwen3 and Qwen2.5-VL: check each model page on ollama.com before redistributing in an ISO).
+
+System tools used at runtime: xdotool, scrot, ImageMagick, zenity, AT-SPI (each under its own license).

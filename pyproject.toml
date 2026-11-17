@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "odeifried"
+version = "0.1.0"
+description = "Odeifried: an AI-native desktop where a local AI operates the computer for you"
+readme = "README.md"
+license = { text = "Apache-2.0" }
+requires-python = ">=3.11"
+dependencies = []            # runtime uses only the Python standard library
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+
+[project.scripts]
+odeifried = "odeifried.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["odeifried*"]
+
+[tool.setuptools.package-data]
+odeifried = ["default_config.toml"]
