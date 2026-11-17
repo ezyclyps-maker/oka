@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Odeifried AI (background)
+Exec=odeifried bar --gapplication-service
+Icon=odeifried
+NoDisplay=true
+X-GNOME-Autostart-enabled=true

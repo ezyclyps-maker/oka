@@ -1,0 +1,34 @@
+#!/bin/sh
+# Runs at every login (see /etc/xdg/autostart/odeifried-session.desktop).
+
+# Tapping the Windows/Super key alone opens the Start menu (it is bound to Ctrl+Esc).
+command -v xcape >/dev/null && { pkill -u "$(id -u)" -x xcape; xcape -e 'Super_L=Control_L|Escape'; }
+
+# Password popups for admin actions.
+[ -x /usr/libexec/polkit-mate-authentication-agent-1 ] && /usr/libexec/polkit-mate-authentication-agent-1 &
+
+# In a virtual machine the screen starts tiny: pick a comfortable size once.
+if [ ! -e "$HOME/.config/odeifried/display-set" ] && systemd-detect-virt -q 2>/dev/null; then
+    out=$(xrandr | awk '/ connected/{print $1; exit}')
+    for mode in 1920x1080 1680x1050 1600x900 1440x900 1366x768 1280x800; do
+        if xrandr | grep -q " $mode "; then xrandr --output "$out" --mode "$mode" && break; fi
+    done
+    (sleep 2; xfdesktop --reload) >/dev/null 2>&1 &        # redraw the wallpaper at the new size
+    mkdir -p "$HOME/.config/odeifried" && : > "$HOME/.config/odeifried/display-set"
+fi
+
+# App store (Flathub) for this user, so "install spotify" works without admin rights.
+if command -v flatpak >/dev/null && [ ! -e "$HOME/.config/odeifried/flathub-added" ]; then
+    flatpak remote-add --user --if-not-exists flathub /usr/share/odeifried/flathub.flatpakrepo 2>/dev/null \
+        && mkdir -p "$HOME/.config/odeifried" && : > "$HOME/.config/odeifried/flathub-added"
+fi
+
+# Warm up the AI model in the background (harmless if no AI engine is set up yet).
+systemctl --user start odeifried-core.service >/dev/null 2>&1 &
+
+# First login: say hello.
+if [ ! -e "$HOME/.config/odeifried/welcomed" ]; then
+    mkdir -p "$HOME/.config/odeifried" && : > "$HOME/.config/odeifried/welcomed"
+    (sleep 6; notify-send -i odeifried -t 20000 "Welcome to Odeifried" \
+        "Press Super+Space (Windows key + Space) and tell your computer what to do. Try: help") &
+fi

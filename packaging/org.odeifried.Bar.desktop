@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Name=Odeifried AI
+GenericName=AI Assistant
+Comment=Tell your computer what to do (Super+Space)
+Exec=odeifried bar
+Icon=odeifried
+Terminal=false
+Categories=Utility;
+Keywords=ai;assistant;search;run;
+StartupNotify=false
+DBusActivatable=true

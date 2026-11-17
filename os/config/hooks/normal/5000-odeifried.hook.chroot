@@ -1,0 +1,53 @@
+#!/bin/sh
+# Runs inside the new system while the image is built: turns plain Debian into Odeifried.
+set -e
+VERSION="0.2"
+
+echo "I: Odeifried: identity"
+# dpkg-divert = "keep my version even when Debian updates this file later".
+for f in /usr/lib/os-release /etc/issue /etc/issue.net; do
+    dpkg-divert --quiet --add --rename --divert "$f.debian" "$f"
+done
+cat > /usr/lib/os-release <<OSR
+PRETTY_NAME="Odeifried $VERSION"
+NAME="Odeifried"
+VERSION_ID="$VERSION"
+VERSION="$VERSION"
+VERSION_CODENAME=trixie
+ID=odeifried
+ID_LIKE=debian
+LOGO=odeifried
+OSR
+ln -sf ../usr/lib/os-release /etc/os-release
+echo "Odeifried $VERSION \\n \\l" > /etc/issue
+echo "Odeifried $VERSION" > /etc/issue.net
+printf 'Vendor: Odeifried\nParent: Debian\n' > /etc/dpkg/origins/odeifried
+ln -sf odeifried /etc/dpkg/origins/default
+
+echo "I: Odeifried: default wallpaper on every screen"
+if [ -e /usr/share/backgrounds/xfce/xfce-x.svg ]; then
+    dpkg-divert --quiet --add --rename --divert /usr/share/backgrounds/xfce/xfce-x.svg.debian /usr/share/backgrounds/xfce/xfce-x.svg
+    ln -sf /usr/share/backgrounds/odeifried/wallpaper.jpg /usr/share/backgrounds/xfce/xfce-x.svg
+fi
+
+echo "I: Odeifried: installer branding"
+if [ -f /etc/calamares/settings.conf ]; then
+    sed -i 's/^branding:.*/branding: odeifried/' /etc/calamares/settings.conf
+    for f in /usr/share/applications/calamares-install-debian.desktop /usr/bin/add-calamares-desktop-icon; do
+        sed -i -e 's/Install Debian/Install Odeifried/g' -e 's/Installer for Debian Live/Install Odeifried on this computer/' \
+               -e 's/Icon=install-debian/Icon=odeifried-install/' "$f"
+    done
+fi
+
+echo "I: Odeifried: defaults"
+update-alternatives --set x-terminal-emulator /usr/bin/xfce4-terminal.wrapper 2>/dev/null || true
+update-alternatives --set x-www-browser /usr/bin/firefox-esr 2>/dev/null || true
+sed -i 's/^# *en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && locale-gen >/dev/null
+update-locale LANG=en_US.UTF-8
+gtk-update-icon-cache -q -f /usr/share/icons/hicolor 2>/dev/null || true
+
+echo "I: Odeifried: AI warm-up service for every user"
+systemctl --global enable odeifried-core.service 2>/dev/null || true
+
+echo "I: Odeifried: boot animation"
+update-initramfs -u -k all

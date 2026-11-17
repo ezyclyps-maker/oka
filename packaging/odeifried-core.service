@@ -1,0 +1,11 @@
+[Unit]
+Description=Odeifried AI: keeps the model warm so the first request is fast
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/odeifried warm
+# The AI can never become administrator: sudo/pkexec cannot gain privileges from here.
+NoNewPrivileges=yes
+
+[Install]
+WantedBy=default.target

@@ -42,3 +42,7 @@ fdisk
 parted
 squashfs-tools
 os-prober
+
+# Creates the "user" account and auto-login when running from the USB stick
+user-setup
+live-tools

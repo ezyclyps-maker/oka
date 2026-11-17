@@ -1,0 +1,33 @@
+---
+componentName:   odeifried
+welcomeStyleCalamares: true
+welcomeExpandingLogo: true
+windowExpanding: normal
+windowSize: 800px,580px
+windowPlacement: center
+strings:
+    productName:         Odeifried
+    shortProductName:    Odeifried
+    version:             0.2
+    shortVersion:        0.2
+    versionedName:       Odeifried 0.2
+    shortVersionedName:  Odeifried 0.2
+    bootloaderEntryName: Odeifried
+    productUrl:          https://www.debian.org
+    supportUrl:          https://www.debian.org/support
+    knownIssuesUrl:      https://www.debian.org
+    releaseNotesUrl:     https://www.debian.org
+    donateUrl:           https://www.debian.org
+sidebar: widget
+navigation: widget
+images:
+    productLogo:         "logo.png"
+    productIcon:         "logo.png"
+    productWelcome:      "welcome.png"
+slideshow:               "show.qml"
+style:
+   SidebarBackground:    "#0d1233"
+   SidebarText:          "#c7d2fe"
+   SidebarTextCurrent:   "#ffffff"
+   SidebarBackgroundCurrent: "#4f46e5"
+slideshowAPI: 2

@@ -1,0 +1,3 @@
+{"policies": {"DisableTelemetry": true, "DontCheckDefaultBrowser": true, "OverrideFirstRunPage": "",
+              "OverridePostUpdatePage": "", "NoDefaultBookmarks": true,
+              "UserMessaging": {"SkipOnboarding": true, "ExtensionRecommendations": false, "FeatureRecommendations": false}}}

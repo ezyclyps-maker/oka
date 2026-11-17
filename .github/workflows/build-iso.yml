@@ -1,0 +1,46 @@
+# Builds the Odeifried install image on GitHub's computers (free for public repositories).
+# Every push to main produces a downloadable ISO under  Actions -> the run -> Artifacts.
+# Pushing a tag like v0.2.0 also publishes it under Releases.
+name: Build Odeifried ISO
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pytest && python -m pytest -q
+
+  iso:
+    needs: test
+    runs-on: ubuntu-latest
+    container:
+      image: debian:trixie
+      options: --privileged
+    steps:
+      - name: Tools
+        run: apt-get update && apt-get install -y --no-install-recommends git ca-certificates python3 sudo
+      - uses: actions/checkout@v4
+      - name: Build the ISO
+        run: os/build.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: odeifried-iso
+          path: dist/*
+          compression-level: 0
+      - name: Publish release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*

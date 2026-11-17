@@ -14,4 +14,11 @@ this list will say which files.
 Models are downloaded separately by the user and carry their own licenses
 (e.g. Qwen3 and Qwen2.5-VL: check each model page on ollama.com before redistributing in an ISO).
 
+The Odeifried install image (ISO) is a Debian 13 derivative. It contains unmodified Debian packages
+(each under its own license, see /usr/share/doc/*/copyright in the installed system), built with
+live-build, installed with Calamares, and using the Xfce desktop, the Orchis GTK theme, Papirus icons
+and the Inter font. It also includes hardware firmware from Debian's "non-free-firmware" section:
+free of charge and redistributable, but not open source. Debian is a trademark of Software in the
+Public Interest; Odeifried is not affiliated with or endorsed by Debian.
+
 System tools used at runtime: xdotool, scrot, ImageMagick, zenity, AT-SPI (each under its own license).

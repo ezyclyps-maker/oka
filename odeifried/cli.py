@@ -18,7 +18,7 @@ from .journal import undo_last
 from .llm import LLMError, Ollama, has_model
 from .safety.killswitch import KillSwitch
 
-COMMANDS = {"run", "chat", "bar", "doctor", "stop", "undo", "log", "skills", "-h", "--help"}
+COMMANDS = {"run", "chat", "bar", "warm", "doctor", "stop", "undo", "log", "skills", "-h", "--help"}
 
 
 def make_llm(cfg) -> Ollama:
@@ -133,7 +133,8 @@ def main(argv: list[str] | None = None) -> int:
     b.add_argument("--gapplication-service", action="store_true", help=argparse.SUPPRESS)
     for name, text in (("doctor", "check hardware, AI engine, models and desktop tools"),
                        ("stop", "kill switch: stop the AI now"), ("undo", "reverse the file changes of the last task"),
-                       ("log", "show the latest log entries"), ("skills", "show what the AI has learned to do instantly")):
+                       ("log", "show the latest log entries"), ("skills", "show what the AI has learned to do instantly"),
+                       ("warm", "load the AI model into memory")):
         sub.add_parser(name, help=text)
     a = p.parse_args(argv)
     cfg = config.load()
@@ -146,6 +147,14 @@ def main(argv: list[str] | None = None) -> int:
     if a.cmd == "bar":
         from .bar import main as bar_main
         return bar_main(["odeifried-bar"] + (["--gapplication-service"] if a.gapplication_service else []))
+    if a.cmd == "warm":
+        from .agent import Assistant
+        from .safety.confirm import AlwaysDeny
+        try:
+            Assistant(cfg, make_llm(cfg), AlwaysDeny(), gui=True).warm()
+        except Exception as e:  # noqa: BLE001 - no engine yet is fine; instant commands need none
+            print(f"model not warmed: {e}")
+        return 0
     if a.cmd == "stop":
         print("AI stopped." if KillSwitch(cfg.state_dir).press() else "Stop flag set (the AI was not running).")
         return 0

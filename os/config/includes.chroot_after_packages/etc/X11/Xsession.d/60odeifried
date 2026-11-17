@@ -1,0 +1,5 @@
+# Odeifried desktop defaults live in /etc/xdg/xdg-odeifried (so Debian's own files stay untouched).
+export XDG_CONFIG_DIRS="/etc/xdg/xdg-odeifried:${XDG_CONFIG_DIRS:-/etc/xdg}"
+# Let the AI see buttons and text fields by name in every app (accessibility interface).
+export GNOME_ACCESSIBILITY=1
+export QT_LINUX_ACCESSIBILITY_ALWAYS_ON=1

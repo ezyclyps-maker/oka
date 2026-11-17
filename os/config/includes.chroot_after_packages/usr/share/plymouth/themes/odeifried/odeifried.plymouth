@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=Odeifried
+Description=Odeifried logo with pulsing dots
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/odeifried
+ScriptFile=/usr/share/plymouth/themes/odeifried/odeifried.script

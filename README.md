@@ -1,65 +1,63 @@
 # Odeifried
 
-An AI-native desktop for Linux: you state a goal, a **local** AI operates the computer to finish it.
-100% free and offline: models run in [Ollama](https://ollama.com). Licensed Apache-2.0; see `NOTICE`.
+A real, bootable operating system (a Linux distribution based on Debian 13) that looks and works like
+Windows and has a **local AI built in**. Press **Super+Space** (Windows key + Space) and tell it what to do.
 
-## How it decides what to do (fastest + most reliable first)
-1. **Direct tools**: files, shell, `web_search`, `open_app` (instant, no screen reading)
-2. **Accessibility tree (AT-SPI)**: `list_ui` reads buttons/fields by name; `click_element` presses them
-3. **Vision fallback**: `describe_and_click` screenshots, asks the vision model where to click, clicks with xdotool (slow on CPU, so last resort)
+100% free: the AI models run on your own machine through [Ollama](https://ollama.com). See `NOTICE` for credits.
 
-Every action passes the **safety policy** first: SAFE runs, ASK shows you the exact action, NEVER is refused.
+## What you get
+- A normal desktop: Start menu, taskbar, file manager, settings, browser, installer ("Install Odeifried").
+- **Intent Bar** (Super+Space): type a task. `Tab` switches between **Do** (control the computer) and **Chat**.
+- **Kill switch**: Super+Esc stops the AI instantly. `undo` reverses its file changes.
+- Permission tiers: Safe runs, Ask shows the exact action first, Never is refused.
+
+## How the AI stays fast
+1. **Instant commands**: everyday requests are recognized without any AI model (well under a second).
+   `organize my downloads` · `play lil baby on spotify` · `open youtube` · `volume 40` · `next song` ·
+   `take a screenshot` · `dark mode` · `install spotify` · `search for ...` · `lock` · chain with `then`.
+2. **Learned skills**: a task the AI solved once is replayed from memory next time.
+3. **AI model**: everything else. A few seconds per step on a laptop CPU, much faster with a GPU.
+
+## Models (edit `~/.config/odeifried/config.toml`)
+| Setting | Job | Default |
+|---|---|---|
+| `agent` | does tasks; needs good tool calling | `qwen3:4b` |
+| `chat` | the Chat tab; any Ollama model you like | same as agent |
+| `vision` | reads screenshots (last resort, slow on CPU) | `qwen2.5vl:3b` |
+
+## Get the ISO
+- **Easiest:** push this repository to GitHub. The workflow in `.github/workflows/build-iso.yml` builds
+  the ISO; download it from the run's *Artifacts*.
+- **Build it yourself** on Debian 13 or Ubuntu 22.04+ (15 GB free disk):
+  ```bash
+  sudo os/build.sh
+  ```
+  Result: `dist/odeifried-<version>-amd64.iso`
+
+## Try it in VirtualBox (Windows host)
+1. Install Ollama on Windows and run `ollama pull qwen3:4b`.
+2. New VM: type Linux / Debian 64-bit, 4 CPUs, 6 GB RAM, attach the ISO, start it.
+3. Odeifried finds the Ollama on your Windows machine by itself. Press Super+Space.
+
+Do not install it on a real computer yet: the installer has not been tested end to end.
 
 ## Project map
-| File | What it does |
+| Path | What it is |
 |---|---|
-| `odeifried/default_config.toml` | Model names and paths. Swap models here. |
-| `odeifried/config.py` | Loads defaults + your `~/.config/odeifried/config.toml` |
-| `odeifried/hardware.py` | Detects RAM/GPU, recommends model sizes |
-| `odeifried/llm.py` | Talks to Ollama (tool calling + images) |
-| `odeifried/agent.py` | The loop: plan → safety check → act → verify → repeat |
-| `odeifried/safety/policy.py` | **SAFE / ASK / NEVER rules** |
-| `odeifried/safety/confirm.py` | The permission popup (zenity) or terminal prompt |
-| `odeifried/safety/killswitch.py` | `odeifried stop` halts the agent immediately |
-| `odeifried/journal.py` | Records file changes so `odeifried undo` can reverse them |
-| `odeifried/audit.py` | Action log in `/var/log/odeifried/` |
-| `odeifried/tools/files.py` | List/move/organize/trash files |
-| `odeifried/tools/shell.py` | Run commands (non-root, 60 s timeout) |
-| `odeifried/control/desktop.py` | Open apps/URLs, AT-SPI clicking, typing, screenshots |
-| `odeifried/control/vision.py` | Screenshot shrinking + parsing click points from the vision model |
-| `tests/` | 120 tests, mostly safety |
+| `odeifried/router.py` | instant commands and "do this, then that" splitting |
+| `odeifried/agent.py` | picks the route (instant / skill / AI) and runs every action through the safety gate |
+| `odeifried/safety/` | permission tiers, confirmation, kill switch |
+| `odeifried/tools/` | files, shell, music, volume, power, app install |
+| `odeifried/control/` | open apps, accessibility tree, vision fallback |
+| `odeifried/memory.py` | SQLite: history, learned skills, cache |
+| `odeifried/engine.py` | finds the Ollama server (this PC, or the VM host) |
+| `odeifried/bar.py` | the Intent Bar window |
+| `os/config/` | the OS recipe: packages, desktop layout, branding, installer |
+| `os/build.sh` | builds the ISO |
+| `os/test/vm.py` | boots an ISO in QEMU and takes screenshots |
+| `tests/` | automated tests (safety first) |
 
-## Install (inside the Ubuntu VM, "Ubuntu on Xorg" session)
+## Develop
 ```bash
-cd ~/odeifried
-bash scripts/install.sh
-```
-Open a new terminal:
-```bash
-odeifried doctor
-```
-You should see `Ollama: reachable`, `planner qwen3:4b: installed`, `Desktop session: x11`, and `ok` for the tools.
-
-On the **Windows host**, pull the vision model too (Phase 2): `ollama pull qwen2.5vl:3b`
-
-## Phase 1 test
-```bash
-bash scripts/make_fake_downloads.sh
-odeifried run "organize ~/Downloads by file type"
-ls ~/Downloads
-odeifried undo
-```
-
-## Phase 2 test
-```bash
-odeifried run "open Firefox, search for weather in New York, and screenshot the result"
-ls ~/Pictures/Odeifried
-```
-
-## Other commands
-`odeifried stop` (kill switch) · `odeifried undo` · `odeifried log` · `odeifried run --no-gui "..."`
-
-## Run the tests
-```bash
-~/.local/share/odeifried/venv/bin/pytest -q
+python3 -m pytest -q
 ```

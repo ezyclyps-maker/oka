@@ -50,9 +50,7 @@ pavucontrol
 blueman
 mate-polkit
 # Look and feel
-arc-theme
 orchis-gtk-theme
-greybird-gtk-theme
 papirus-icon-theme
 adwaita-icon-theme
 dmz-cursor-theme
@@ -67,6 +65,8 @@ fonts-noto-color-emoji
 fontconfig
 xcape
 plymouth
+libnotify-bin
+playerctl
 # Everyday apps
 firefox-esr
 mousepad
