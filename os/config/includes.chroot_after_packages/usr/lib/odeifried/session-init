@@ -7,16 +7,6 @@ command -v xcape >/dev/null && { pkill -u "$(id -u)" -x xcape; xcape -e 'Super_L
 # Password popups for admin actions.
 [ -x /usr/libexec/polkit-mate-authentication-agent-1 ] && /usr/libexec/polkit-mate-authentication-agent-1 &
 
-# In a virtual machine the screen starts tiny: pick a comfortable size once.
-if [ ! -e "$HOME/.config/odeifried/display-set" ] && systemd-detect-virt -q 2>/dev/null; then
-    out=$(xrandr | awk '/ connected/{print $1; exit}')
-    for mode in 1920x1080 1680x1050 1600x900 1440x900 1366x768 1280x800; do
-        if xrandr | grep -q " $mode "; then xrandr --output "$out" --mode "$mode" && break; fi
-    done
-    (sleep 2; xfdesktop --reload) >/dev/null 2>&1 &        # redraw the wallpaper at the new size
-    mkdir -p "$HOME/.config/odeifried" && : > "$HOME/.config/odeifried/display-set"
-fi
-
 # App store (Flathub) for this user, so "install spotify" works without admin rights.
 if command -v flatpak >/dev/null && [ ! -e "$HOME/.config/odeifried/flathub-added" ]; then
     flatpak remote-add --user --if-not-exists flathub /usr/share/odeifried/flathub.flatpakrepo 2>/dev/null \
