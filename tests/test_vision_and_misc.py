@@ -50,5 +50,5 @@ def test_killswitch(tmp_path):
 
 def test_recommend_cpu_only_16gb():
     rec = hardware.recommend(hardware.Hardware(16, 12, None, None))
-    assert rec["planner"] == "qwen3:4b"
-    assert hardware.recommend(hardware.Hardware(32, 16, "RTX 3060", 12))["planner"] == "qwen3:14b"
+    assert rec["agent"] == "qwen3:4b"
+    assert hardware.recommend(hardware.Hardware(32, 16, "RTX 3060", 12))["agent"] == "qwen3:14b"

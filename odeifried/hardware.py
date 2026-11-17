@@ -49,12 +49,12 @@ def recommend(hw: Hardware) -> dict[str, str]:
     """Pick planner/vision models by available memory. Tags are defaults; edit config to override."""
     vram = hw.vram_gb or 0
     if vram >= 24:
-        return {"planner": "qwen3:32b", "vision": "qwen2.5vl:32b", "note": "Large GPU: full-size models."}
+        return {"agent": "qwen3:32b", "vision": "qwen2.5vl:32b", "note": "Large GPU: full-size models."}
     if vram >= 12:
-        return {"planner": "qwen3:14b", "vision": "qwen2.5vl:7b", "note": "12GB+ GPU: try UI-TARS-1.5-7B for vision."}
+        return {"agent": "qwen3:14b", "vision": "qwen2.5vl:7b", "note": "12GB+ GPU: try UI-TARS-1.5-7B for vision."}
     if vram >= 8:
-        return {"planner": "qwen3:8b", "vision": "qwen2.5vl:7b", "note": "8GB GPU: quantized 7B vision."}
+        return {"agent": "qwen3:8b", "vision": "qwen2.5vl:7b", "note": "8GB GPU: quantized 7B vision."}
     if hw.ram_gb >= 30:
-        return {"planner": "qwen3:8b", "vision": "qwen2.5vl:7b", "note": "CPU only, lots of RAM: slow but capable."}
-    return {"planner": "qwen3:4b", "vision": "qwen2.5vl:3b",
+        return {"agent": "qwen3:8b", "vision": "qwen2.5vl:7b", "note": "CPU only, lots of RAM: slow but capable."}
+    return {"agent": "qwen3:4b", "vision": "qwen2.5vl:3b",
             "note": "CPU only: small models. Prefer accessibility over vision for speed."}

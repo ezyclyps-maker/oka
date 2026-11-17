@@ -1,0 +1,4 @@
+# Needed only when the user ticks "encrypt the disk" in the installer:
+cryptsetup
+cryptsetup-initramfs
+keyutils

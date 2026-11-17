@@ -7,17 +7,29 @@ import re
 import shutil
 import subprocess
 import time
-import webbrowser
 from pathlib import Path
 from urllib.parse import quote_plus, urlparse
 
-from ..tools import Tool
+from ..tools import Tool, launch_detached
 from . import vision
 
 APP_DIRS = [Path("/usr/share/applications"), Path.home() / ".local/share/applications",
             Path("/var/lib/snapd/desktop/applications"), Path("/var/lib/flatpak/exports/share/applications")]
-ALIASES = {"files": "nautilus", "file manager": "nautilus", "browser": "firefox", "terminal": "gnome-terminal",
-           "settings": "gnome-control-center", "text editor": "gnome-text-editor", "calculator": "gnome-calculator"}
+# Everyday names -> the programs that provide them (first one installed wins).
+ALIASES = {
+    "files": ["thunar", "nautilus", "nemo", "dolphin"], "file manager": ["thunar", "nautilus", "nemo", "dolphin"],
+    "file explorer": ["thunar", "nautilus", "nemo", "dolphin"], "explorer": ["thunar", "nautilus", "nemo", "dolphin"],
+    "browser": ["firefox-esr", "firefox", "chromium", "google-chrome"], "web browser": ["firefox-esr", "firefox", "chromium"],
+    "firefox": ["firefox-esr", "firefox"], "internet": ["firefox-esr", "firefox"],
+    "terminal": ["xfce4-terminal", "gnome-terminal", "konsole", "xterm"], "command prompt": ["xfce4-terminal", "gnome-terminal"],
+    "settings": ["xfce-settings-manager", "xfce4-settings-manager", "gnome-control-center", "systemsettings"],
+    "control panel": ["xfce-settings-manager", "xfce4-settings-manager", "gnome-control-center"],
+    "text editor": ["mousepad", "gnome-text-editor", "gedit", "kate"], "notepad": ["mousepad", "gnome-text-editor", "gedit"],
+    "calculator": ["galculator", "gnome-calculator", "kcalc"], "task manager": ["xfce4-taskmanager", "gnome-system-monitor"],
+    "image viewer": ["ristretto", "eog"], "photos": ["ristretto", "eog"], "video player": ["mpv", "vlc", "totem"],
+    "spotify": ["spotify", "com.spotify.Client", "spotify_spotify"], "discord": ["discord", "com.discordapp.Discord"],
+    "store": ["gnome-software", "org.gnome.Software"], "volume mixer": ["pavucontrol"],
+}
 
 
 def _xdotool(*args: str) -> None:
@@ -26,19 +38,35 @@ def _xdotool(*args: str) -> None:
     subprocess.run(["xdotool", *args], check=True, timeout=20)
 
 
-def find_desktop_entry(name: str) -> str | None:
-    """Match an app by .desktop file id or its Name= field. Only installed apps can be launched."""
-    want = ALIASES.get(name.lower().strip(), name.lower().strip())
-    for d in APP_DIRS:
+def _entries() -> list[tuple[str, str]]:
+    """(desktop file id, shown name) of every installed app that appears in menus."""
+    out = []
+    dirs = APP_DIRS + [Path.home() / ".local/share/flatpak/exports/share/applications"]
+    for d in dirs:
         for f in sorted(d.glob("*.desktop")) if d.is_dir() else []:
             cp = configparser.ConfigParser(interpolation=None, strict=False)
             try:
                 cp.read(f, encoding="utf-8")
-                shown = cp.get("Desktop Entry", "Name", fallback="").lower()
+                if cp.get("Desktop Entry", "NoDisplay", fallback="false").lower() == "true" and "settings" not in f.stem:
+                    continue
+                out.append((f.stem, cp.get("Desktop Entry", "Name", fallback="").lower()))
             except (configparser.Error, UnicodeDecodeError):
                 continue
-            if want in {f.stem.lower(), shown} or f.stem.lower().endswith("_" + want) or f.stem.lower().endswith("." + want):
-                return f.stem
+    return out
+
+
+def find_desktop_entry(name: str) -> str | None:
+    """Match an app by .desktop file id or its Name= field. Only installed apps can be launched."""
+    want = name.lower().strip()
+    if not want or not re.fullmatch(r"[\w .+&'-]+", want):
+        return None
+    entries = _entries()
+    for candidate in ALIASES.get(want, []) + [want]:
+        c = candidate.lower()
+        for stem, shown in entries:
+            low = stem.lower()
+            if c in {low, shown} or low.endswith("_" + c) or low.endswith("." + c) or low.endswith("-" + c):
+                return stem
     return None
 
 
@@ -47,16 +75,16 @@ def open_app(ctx, name: str) -> str:
     entry = find_desktop_entry(name)
     if not entry:
         return f"ERROR: no installed app called '{name}'"
-    subprocess.Popen(["gtk-launch", entry], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
-    time.sleep(3)
-    return f"launched {entry}. Use list_ui to see its buttons and fields."
+    launch_detached(["gtk-launch", entry])
+    time.sleep(2)
+    return f"VERIFIED opened {name} ({entry})"
 
 
 def open_url(ctx, url: str) -> str:
     if urlparse(url).scheme not in {"http", "https"}:
         return "ERROR: only http(s) URLs"
-    webbrowser.open(url)
-    time.sleep(4)
+    launch_detached(["xdg-open", url])
+    time.sleep(1)
     return f"opened {url} in the browser"
 
 

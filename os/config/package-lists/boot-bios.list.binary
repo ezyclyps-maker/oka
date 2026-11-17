@@ -1,0 +1,4 @@
+# Copied onto the ISO (not installed in the live system). The installer picks the boot loader
+# that matches the machine from here, so installing works without internet.
+# Old-style BIOS machines:
+grub-pc

@@ -1,0 +1,12 @@
+label live-@FLAVOUR@
+	menu label ^Start Odeifried
+	menu default
+	linux @LINUX@
+	initrd @INITRD@
+	append @APPEND_LIVE@
+
+label live-@FLAVOUR@-failsafe
+	menu label Start Odeifried (safe ^graphics - try this if the screen stays black)
+	linux @LINUX@
+	initrd @INITRD@
+	append @APPEND_LIVE_FAILSAFE@

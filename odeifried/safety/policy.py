@@ -196,6 +196,19 @@ class Policy:
                     return classify_shell(a["command"], self.safe_programs)
                 case "open_app" | "open_url" | "web_search" | "screenshot" | "list_ui" | "wait" | "done":
                     return SAFE("viewing / opening")
+                case "answer" | "undo_last" | "play_music" | "media_control" | "set_volume" | "set_theme":
+                    return SAFE("harmless and instantly reversible")
+                case "power":
+                    action = str(a["action"]).lower()
+                    if action in {"lock", "sleep"}:
+                        return SAFE(f"{action} loses no work")
+                    if action in {"shutdown", "restart", "logout"}:
+                        return ASK(f"{action} closes your apps; unsaved work would be lost")
+                    return NEVER(f"unknown power action '{action}'")
+                case "install_app":
+                    return ASK(f"install the app '{a['name']}'")
+                case "empty_trash":
+                    return ASK("permanently delete everything in the Trash (cannot be undone)")
                 case "click_element" | "click_xy" | "describe_and_click":
                     return classify_ui_target(a.get("name") or a.get("description") or "")
                 case "type_text":

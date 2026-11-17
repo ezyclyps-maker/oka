@@ -1,0 +1,6 @@
+# Modern UEFI machines (signed, so it also boots with Secure Boot switched on):
+grub-efi
+grub-efi-amd64
+grub-efi-amd64-signed
+shim-signed
+efibootmgr

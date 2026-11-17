@@ -1,0 +1,14 @@
+# Hardware drivers ("firmware") so Wi-Fi, graphics and sound work on real laptops.
+# These are free-of-charge binary blobs from hardware makers (Debian "non-free-firmware").
+firmware-linux-free
+firmware-misc-nonfree
+firmware-intel-graphics
+firmware-amd-graphics
+firmware-iwlwifi
+firmware-realtek
+firmware-mediatek
+firmware-atheros
+firmware-brcm80211
+firmware-sof-signed
+intel-microcode
+amd64-microcode

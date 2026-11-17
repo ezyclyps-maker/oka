@@ -1,22 +1,37 @@
 # Odeifried default configuration.
-# Copy to ~/.config/odeifried/config.toml and edit; your file overrides these values.
-# Swapping a model = changing one line below, then `ollama pull <name>`.
+# To change something, copy this file to ~/.config/odeifried/config.toml and edit it there;
+# your file overrides these values. Swapping a model = changing one line, then `ollama pull <name>`.
 
 [models]
-ollama_url = "http://10.0.2.2:11434"   # VirtualBox NAT address of the Windows host
-planner = "qwen3:4b"                     # reasoning + tool calling
-vision = "qwen2.5vl:3b"                  # GUI fallback; try a UI-TARS GGUF when you have a GPU
+# Where the AI engine (Ollama) runs. "auto" tries, in order: this computer, then the computer
+# hosting this virtual machine (VirtualBox / QEMU / VMware), and remembers what worked.
+ollama_url = "auto"
+
+agent = "qwen3:4b"         # does tasks: must be good at tool calling; smaller = faster
+chat = ""                  # chat-only model for the "Chat" tab. Empty = use the agent model.
+                           # Any model Ollama can run works here, e.g. chat = "dolphin3"
+vision = "qwen2.5vl:3b"    # looks at screenshots (slow without a GPU; last resort)
+
 temperature = 0.1
-timeout_seconds = 300                    # CPU inference is slow; be patient
-think = false                            # qwen3 "thinking" off = much faster on CPU
+timeout_seconds = 300      # CPU inference is slow; be patient
+think = false              # "thinking" off = much faster answers on CPU
+keep_alive = "2h"          # keep the model loaded in memory so replies start instantly
 
 [agent]
 max_steps = 25
-screenshot_max_width = 1280              # smaller screenshots = faster vision model
+screenshot_max_width = 1280    # smaller screenshots = faster vision model
+learn_skills = true            # remember successful tasks and replay them instantly next time
+
+[music]
+service = "spotify"            # what "play ..." uses when you don't name a service
+
+[desktop]
+light_theme = "Orchis-Light"
+dark_theme = "Orchis-Dark"
 
 [paths]
 log_dir = "/var/log/odeifried"           # falls back to ~/.local/state/odeifried/logs if not writable
-state_dir = "~/.local/state/odeifried"   # undo journals, kill-switch flag
+state_dir = "~/.local/state/odeifried"   # undo journals, memory, kill-switch flag
 
 [safety]
 # Folders the agent may change without asking (moves/creates). Everything else = Ask.

@@ -1,0 +1,80 @@
+# Display server + graphics
+xserver-xorg
+xserver-xorg-input-libinput
+x11-xserver-utils
+x11-utils
+x11-xkb-utils
+xauth
+libgl1-mesa-dri
+# Login screen
+lightdm
+lightdm-gtk-greeter
+light-locker
+# Desktop (Xfce: light and fast, laid out like Windows)
+xfce4-session
+xfwm4
+xfdesktop4
+xfce4-panel
+xfce4-settings
+xfconf
+libxfce4ui-utils
+exo-utils
+xfce4-appfinder
+xfce4-whiskermenu-plugin
+xfce4-docklike-plugin
+xfce4-pulseaudio-plugin
+xfce4-power-manager
+xfce4-power-manager-plugins
+xfce4-notifyd
+xfce4-screenshooter
+xfce4-taskmanager
+xfce4-terminal
+# File manager ("Explorer")
+thunar
+thunar-volman
+thunar-archive-plugin
+tumbler
+gvfs
+gvfs-fuse
+xdg-user-dirs
+xdg-user-dirs-gtk
+xdg-utils
+desktop-file-utils
+shared-mime-info
+# Network, sound, bluetooth, permissions popups
+network-manager-applet
+pipewire-audio
+alsa-utils
+pulseaudio-utils
+pavucontrol
+blueman
+mate-polkit
+# Look and feel
+arc-theme
+orchis-gtk-theme
+greybird-gtk-theme
+papirus-icon-theme
+adwaita-icon-theme
+dmz-cursor-theme
+librsvg2-common
+libgtk-3-bin
+at-spi2-core
+fonts-inter
+fonts-dejavu-core
+fonts-liberation2
+fonts-noto-core
+fonts-noto-color-emoji
+fontconfig
+xcape
+plymouth
+# Everyday apps
+firefox-esr
+mousepad
+ristretto
+xarchiver
+galculator
+mpv
+# App installs without admin rights (Flatpak / Flathub)
+flatpak
+xdg-desktop-portal
+xdg-desktop-portal-gtk

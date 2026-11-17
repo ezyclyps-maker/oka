@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480" width="640" height="480">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#070b1d"/>
+      <stop offset="0.55" stop-color="#0d1233"/>
+      <stop offset="1" stop-color="#1a1147"/>
+    </linearGradient>
+    <linearGradient id="mark" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#22d3ee"/>
+      <stop offset="0.55" stop-color="#6366f1"/>
+      <stop offset="1" stop-color="#a855f7"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.2" r="0.6">
+      <stop offset="0" stop-color="#4338ca" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#4338ca" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="640" height="480" fill="url(#bg)"/>
+  <rect width="640" height="480" fill="url(#glow)"/>
+  <g transform="translate(206 52) scale(0.32)">
+    <rect x="14" y="14" width="228" height="228" rx="58" fill="url(#mark)"/>
+    <circle cx="128" cy="128" r="64" fill="none" stroke="#ffffff" stroke-width="20"/>
+    <path d="M128 90 C131 113 143 125 166 128 C143 131 131 143 128 166 C125 143 113 131 90 128 C113 125 125 113 128 90Z" fill="#ffffff"/>
+  </g>
+  <text x="300" y="107" font-family="DejaVu Sans" font-size="40" font-weight="bold" fill="#ffffff">Odeifried</text>
+  <text x="320" y="160" text-anchor="middle" font-family="DejaVu Sans" font-size="13" fill="#a5b4fc">the AI-native operating system  ·  version @VERSION@</text>
+</svg>
