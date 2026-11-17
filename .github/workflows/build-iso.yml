@@ -41,6 +41,9 @@ jobs:
           compression-level: 0
       - name: Publish release
         if: startsWith(github.ref, 'refs/tags/v')
-        uses: softprops/action-gh-release@v2
-        with:
-          files: dist/*
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          apt-get install -y --no-install-recommends gh
+          git config --global --add safe.directory "$PWD"
+          gh release create "${GITHUB_REF_NAME}" dist/* --title "Odeifried ${GITHUB_REF_NAME}" --generate-notes
